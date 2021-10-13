@@ -1,0 +1,257 @@
+1 <!DOCTYPE html>
+2 <html>
+3
+4 <head>
+    5     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    6     <meta http-equiv="X-UA-Compatible" content="IE=100">
+    7     <title></title>
+    8     <link href="../content/css/homeCommon.css" rel="stylesheet" />
+    9     <link href="../content/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet" />
+    10     <style>
+    11         .multiSelect {
+        12             display: none;
+        13             position: absolute;
+        14             background:rgba(255,255,255,0.8);
+        15             border: 1px solid #dfdfdf;
+        16             color:#000;
+        17         }
+    18             .multiSelect li, .multiSelect input {
+                       19                 cursor: pointer;
+                       20                 margin: 5px 3px 5px 2px;
+                       21             }
+    22             .multiSelect ul{
+                       23                 height:250px;/*高度可以自定义*/
+                       24                 overflow:auto;
+                       25             }
+    26             .box{
+                       27             border-bottom:0;
+                       28         }
+    29     </style>
+    30 </head>
+31
+32 <body>
+33     <div class="content">
+    34         <div class="content10">
+    35             <div class="box-body box">
+    36                 <div>
+    37                     <!--<span style="width:500px;display:inline-block;"></span>-->
+    38                     表头配置：
+    39                     <input type="text" data-multiselect style="width: 180px;">
+    40                 </div>
+    41             </div>
+    42             <table class="jqgrid" id="gridlist"></table>
+    43             <div id="gridpage"></div>
+    44         </div>
+    45         </div>
+46         <script src="../content/js/jquery-1.11.0.js"></script>
+47         <script src="../content/plugins/multiSelectControlJqgridCol/jqgrid动态控制列显示隐藏.js"></script>
+48         <script src="../content/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+49         <script>
+    50             $(function () {
+        51                 //names=[jqgrid的列头名称，这个值负责下拉列表的名称显示]
+        52                 //modelnames=[jqgrid列头名称对应的id,这个值控制jqgrid的列显示隐藏]
+        53                 //names数组与modelnames数组2个值必须一一对应
+        54                 var names = ['常用', '流水号', '疫苗种类', '疫苗信息', '包装(支/件)', '生产企业', '库存量', '采购数量', '采购价（元）', '采购金额（元）', '生产注册号（隐藏）'],
+            55                     modelnames = ['ISCU', 'DRUGID', 'DRUGTYPE', 'PRODUCTNAME', 'PACKUNIT', 'COMPANYNAME_SC', 'STORAGECOUNT', 'PURCHASECOUNT', 'ACTUALPRICE', 'COMPANYID_SC'],
+            56                     //kehuSelectHides后台取值----客户选定的隐藏的列数据
+        57                     kehuSelectHides = ['ISCU', 'DRUGID', '1111', '2222', 'STORAGECOUNT'];
+        58                     //kehuSelectHides = [];
+        59
+        60                 //ajaxHideIds 是定义的隐藏下拉框之后调用的回调函数
+        61                 multiSelect.contorlJqgridCol(names, modelnames, kehuSelectHides, function (data) {
+            62                     //第四个function是定义的隐藏下拉框之后调用的回调函数（data是需要隐藏的列id集合）
+            63                     alert(data);
+            64
+            65                 });
+        66                 //jqgrid初始化
+        67                 var obj = {
+            68                     "names": ['常用', '流水号', '疫苗种类', '疫苗信息', '包装(支/件)', '生产企业', '库存量', '采购数量', '采购价（元）', '采购金额（元）', '生产注册号（隐藏）'],
+            69                     "model": [{
+            70                         name: 'ISCU',
+            71                         index: 'ISCU',
+            72                         width: 50,
+            73                         align: 'center',
+            74                         sortable: false,
+            75                         //fixed: true,
+        76                         //resizable:false,
+        77                         formatter: function (cellvalue, options, rowObject) {
+            78                             if (cellvalue == "1") {
+                79                                 return "<a style='cursor:pointer;' onclick='btdel(\""   rowObject.DRUGID   "\");'>加入</a>";
+                80                             } else {
+                81                                 return "<a style='cursor:pointer;' onclick='btAdd(\""   rowObject.DRUGID   "\");'>取消</a>";
+                82                             }
+            83                         }
+        84                     },
+        85                         {
+            86                             name: 'DRUGID',
+                87                             index: 'DRUGID',
+                88                             width: 100,
+                89                             align: 'center',
+                90                             sortable: false
+            91                             //fixed: true
+            92                         },
+        93                         {
+            94                             name: 'DRUGTYPE',
+                95                             index: 'DRUGTYPE',
+                96                             width: 170,
+                97                             align: 'left',
+                98                             //resizable: false,
+            99                             sortable: false,
+                100                             //fixed: true
+            101                         },
+        102                         {
+            103                             name: 'PRODUCTNAME',
+                104                             index: 'PRODUCTNAME',
+                105                             width: 315,
+                106                             align: 'left',
+                107                             sortable: false,
+                108                             //resizable: false,
+            109                             //fixed:true
+            110
+            111                         },
+        112                         {
+            113                             name: 'PACKUNIT',
+                114                             index: 'PACKUNIT',
+                115                             width: 80,
+                116                             align: 'center',
+                117                             sortable: false
+            118                         },
+        119                         {
+            120                             name: 'COMPANYNAME_SC',
+                121                             index: 'COMPANYNAME_SC',
+                122                             width: 200,
+                123                             align: 'left',
+                124                             sortable: false
+            125                         },
+        126                         {
+            127                             name: 'STORAGECOUNT',
+                128                             index: 'STORAGECOUNT',
+                129                             width: 80,
+                130                             align: 'center',
+                131                             sortable: false,
+                132                             formatter: function (cellvalue, options, rowObject) {
+                133                                 return "<span  class='label pull-center bg-blue'>"   cellvalue   "</span>";
+                134                             }
+            135                         },
+        136                         {
+            137                             name: 'PURCHASECOUNT',
+                138                             index: 'PURCHASECOUNT',
+                139                             width: 150,
+                140                             align: 'center',
+                141                             sortable: false,
+                142                             formatter: function (cellvalue, options, rowObject) {
+                143                                 return "<button id=\""   rowObject.DRUGID   "_reduce\" type=\"button\" onclick=\"btnReduce(this.id)\" title=\"-\" style=\"width:20px;padding: 1px;background-color: #F6F2F2;border:1px solid #dfdfdf\">-</button><input type=\"text\" id=\""   rowObject.DRUGID
+                144                                     "_PURCHASECOUNT\" value=\"0\" style=\"width:40px;text-align:center;margin:0 3px;height:19px\" maxlength=\"5\" onchange=\"showValue(this.id,'"   rowObject.COMPANYNAME_SC   "','"   rowObject.PRODUCTNAME   "【"   rowObject.YMMEDICINEMODEL   " "   rowObject.YMOUTLOOKC   " "   rowObject.DRUGFACTOR   rowObject.FORMULATION   "/"   rowObject.YMUNIT   "】','"   rowObject.PACKUNIT   "')\" onfocus=\"foc(this.id)\"/><button class=\"addThis\" type=\"button\" id=\""   rowObject.DRUGID
+                145                                     "_add\" onclick=\"btnAdd(this.id,'"   rowObject.COMPANYNAME_SC   "','"   rowObject.PRODUCTNAME   "【"   rowObject.YMMEDICINEMODEL   " "   rowObject.YMOUTLOOKC   " "   " "   rowObject.DRUGFACTOR   rowObject.FORMULATION   "/"   rowObject.YMUNIT   "】','"   rowObject.PACKUNIT   "')\" title=\" \" style=\"width:20px;text-align:center;background-color: #F6F2F2;border:1px solid #dfdfdf;padding:1px\"> </button>";
+                146                             }
+            147                         },
+        148                         {
+            149                             name: 'ACTUALPRICE',
+                150                             index: 'ACTUALPRICE',
+                151                             width: 100,
+                152                             align: 'right',
+                153                             sortable: false
+            154                         },
+        155                         {
+            156                             name: 'AMOUNT',
+                157                             index: 'AMOUNT',
+                158                             width: 130,
+                159                             align: 'right',
+                160                             sortable: false
+            161                         },
+        162                         {
+            163                             name: 'COMPANYID_SC',
+                164                             index: 'COMPANYID_SC',
+                165                             width: 100,
+                166                             align: 'center'
+            167                         }
+        168                     ]
+        169                 };
+        170
+        171                 gidData = [{
+            172                     ACTUALPRICE: 1,
+            173                     APPROVAL: "S20140114",
+            174                     COMPANYID_SC: "J0383",
+            175                     COMPANYNAME_SC: "Merck Sharp & Dohme Corp.",
+            176                     COMPANYNAME_ZD: "北京科园信海医药经营有限公司",
+            177                     DRUGFACTOR: "1",
+            178                     DRUGID: "2",
+            179                     DRUGTYPE: "23价肺炎球菌多糖疫苗",
+            180                     FORMULATION: "瓶",
+            181                     HOSPITALID: "JK003",
+            182                     ISCU: "1",
+            183                     NETPRICE: null,
+            184                     PACKAGING: "玻璃西林瓶",
+            185                     PACKUNIT: "144",
+            186                     PRODUCTNAME: "23价肺炎球菌多糖疫苗",
+            187                     REMARK: null,
+            188                     STORAGECOUNT: 0,
+            189                     YMMEDICINEMODEL: "注射液",
+            190                     YMOUTLOOKC: "0.5ml/瓶",
+            191                     YMUNIT: "盒",
+            192                     AMOUNT: '10'
+        193                 }];
+        194
+        195                 //初始化隐藏jqgrid客户选择的列
+        196                 obj.model = multiSelect.jqgridHiddenColInit(obj.model, modelnames, kehuSelectHides),
+            197                 $("#gridlist").jqGrid({
+            198                     /*            url: "stdGoods/getStdGoodsData.html",
+199                                 contentType : 'application/json',
+200                                 datatype: "json",*/
+            201                     datatype: "local",
+            202                     data: gidData,
+            203                     //autowidth: true,
+        204                     autowidth: false,
+            205                     shrinkToFit: false, //默认不自适应
+            206                     height: 270,
+            207                     colNames: obj.names,
+            208                     colModel: obj.model,
+            209                     rowNum: 20,
+            210                     rowList: [10, 20, 50, 100],
+            211                     //rownumbers: true,
+        212                     pager: "#gridpage",
+            213                     viewrecords: true,
+            214                     multiselect: true,
+            215                     caption: "",
+            216                     //postData: {"isUsing":1},
+        217                     rownumbers: true, //隐藏jqgrid的序号
+            218                     //序号宽度自动变化
+        219                     gridComplete: function () {
+            220                         var docHei = parseInt($("body").height()) - 9,
+                221                             winHei = parseInt($(window).height()),
+                222                             jqHei = parseInt($(".ui-jqgrid-bdiv").height());
+            223                         if (docHei >= winHei) {
+                224                             var Heit = docHei - winHei,
+                    225                                 tuHei = jqHei - Heit;
+                226                             $(".ui-jqgrid-bdiv").css("height", tuHei);
+                227                         } else {
+                228                             var hei = winHei - docHei   jqHei;
+                229                             $(".ui-jqgrid-bdiv").css("height", hei);
+                230                         }
+            231                         $(".jqgrid").jqGrid("setGridWidth", $(".content10")[0].offsetWidth - 20);
+            232                         var ids = $("#gridlist").getDataIDs();
+            233                         for (var i = 0; i < ids.length; i  ) {
+                234                             var id = ids[i];
+                235                             jQuery("#gridlist").jqGrid('editRow', id);
+                236                         }
+            237                     },
+        238
+        239                     jsonReader: {
+            240                         repeatitems: false,
+                241                         id: "goodsId"
+            242                     }
+        243                 });
+        244                 $("#gridlist").jqGrid('navGrid', '#gridpage', {
+            245                     add: false,
+            246                     edit: false,
+            247                     del: false,
+            248                     search: false,
+            249                     refresh: false
+        250                 }).jqGrid('setFrozenColumns');
+        251
+        252             });
+    253         </script>
+254
+255 </body>
+256
+257 </html>
